@@ -1,29 +1,40 @@
-def encrypt(text, shift):
-    result = ""
-    for char in text:
-        if char.isalpha():
-            base = ord('A') if char.isupper() else ord('a')
-            result += chr((ord(char) - base + shift) % 26 + base)
-        else:
-            result += char
-    return result
+from PIL import Image
+import numpy as np
 
-def decrypt(text, shift):
-    return encrypt(text, -shift)
+# Use a fixed XOR key for encryption/decryption
+KEY = 123
 
-# Main program
-print("Caesar Cipher Tool")
-choice = input("Type 'e' to encrypt or 'd' to decrypt: ").lower()
+def encrypt_image(input_path, output_path):
+    img = Image.open(input_path)
+    arr = np.array(img)
+    encrypted_arr = arr ^ KEY
+    encrypted_img = Image.fromarray(encrypted_arr.astype('uint8'))
+    encrypted_img.save(output_path)
+    print(f"Image encrypted and saved to {output_path}")
 
-if choice in ['e', 'd']:
-    message = input("Enter your message: ")
-    shift = int(input("Enter the shift value: "))
+def decrypt_image(input_path, output_path):
+    img = Image.open(input_path)
+    arr = np.array(img)
+    decrypted_arr = arr ^ KEY
+    decrypted_img = Image.fromarray(decrypted_arr.astype('uint8'))
+    decrypted_img.save(output_path)
+    print(f"Image decrypted and saved to {output_path}")
 
-    if choice == 'e':
-        encrypted = encrypt(message, shift)
-        print("Encrypted message:", encrypted)
+def main():
+    print("=== PixelCryptXOR: Simple Image Encryptor ===")
+    print("1. Encrypt an image")
+    print("2. Decrypt an image")
+    choice = input("Enter your choice (1/2): ")
+
+    input_path = input("Enter input image path (e.g. input.jpg): ")
+    output_path = input("Enter output image path (e.g. output.jpg): ")
+
+    if choice == '1':
+        encrypt_image(input_path, output_path)
+    elif choice == '2':
+        decrypt_image(input_path, output_path)
     else:
-        decrypted = decrypt(message, shift)
-        print("Decrypted message:", decrypted)
-else:
-    print("Invalid choice. Please enter 'e' or 'd'.")
+        print("Invalid choice!")
+
+if _name_ == "_main_":
+    main()
